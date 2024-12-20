@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Minecraft Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.min.js"></script>
+    <script>
+        // 3D sahnani sozlash
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Yoritish
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 10, 7.5);
+        scene.add(light);
+
+        // Yer (grass)
+        const groundGeometry = new THREE.BoxGeometry(10, 1, 10);
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.position.y = -1; // Yer biroz pastga tushiriladi
+        scene.add(ground);
+
+        // Kub yaratish (blok)
+        const blockGeometry = new THREE.BoxGeometry(1, 1, 1);
+        const blockMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+        const block = new THREE.Mesh(blockGeometry, blockMaterial);
+        block.position.y = 0; // Kub yerda joylashgan
+        scene.add(block);
+
+        // Kamera boshlang'ich pozitsiyasi
+        camera.position.z = 5;
+        camera.position.y = 3;
+
+        // Kamera boshqaruvlari
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        // Sahnani yangilash funksiyasi
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Interaktivlik: Bo'sh joy tugmachasini bosganda yangi blok qo'shish
+        window.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                const newBlock = new THREE.Mesh(blockGeometry, blockMaterial);
+                newBlock.position.set(
+                    Math.random() * 8 - 4, // Tasodifiy X koordinatasi
+                    0.5, // Balandlik
+                    Math.random() * 8 - 4 // Tasodifiy Z koordinatasi
+                );
+                scene.add(newBlock);
+            }
+        });
+
+        // Ekran o'lchamini yangilash
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
